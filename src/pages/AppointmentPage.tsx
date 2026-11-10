@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { AppointmentCard } from "../components/AppointmentCard";
 import { StatCard } from "../components/StatCard";
+import FormularioCita from "../components/formularioCita"; // NUEVO
 //import { citasIniciales } from "../data/citas";
 import {
   actualizarEstado, obtenerCitas,
@@ -43,6 +44,7 @@ export function AppointmentsPage() {
 
   const [filtro, setFiltro] = useState<Filtro>("todas");
   const [mensaje, setMensaje] = useState("");
+  const [mostrarFormulario, setMostrarFormulario] = useState(false); // NUEVO
 
   const citasFiltradas =
     filtro === "todas" ? citas : citas.filter((cita) => cita.estado === filtro);
@@ -60,10 +62,26 @@ export function AppointmentsPage() {
             Consulta y administra las citas del día.
           </p>
         </div>
-        <button className="rounded-xl bg-teal-700 px-5 py-3 font-semibold text-white hover:bg-teal-800">
+        <button
+          onClick={() => setMostrarFormulario((v) => !v)} // NUEVO
+          className="rounded-xl bg-teal-700 px-5 py-3 font-semibold text-white hover:bg-teal-800"
+        >
           + Nueva cita
         </button>
       </section>
+
+      {/* NUEVO: el formulario solo aparece al presionar "+ Nueva cita" */}
+      {mostrarFormulario && (
+        <section className="mt-6 rounded-2xl bg-white p-6">
+          <FormularioCita
+            onCreada={async () => {
+              setCitas(await obtenerCitas());
+              setMensaje("Cita agendada correctamente.");
+              setMostrarFormulario(false);
+            }}
+          />
+        </section>
+      )}
 
       <section className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
         <StatCard
@@ -129,4 +147,9 @@ export function AppointmentsPage() {
       </section>
     </main>
   );
+  {error && (
+  <p className="mt-6 rounded-xl bg-red-100 px-4 py-3 text-red-800">
+    {error}
+  </p>
+)}
 }

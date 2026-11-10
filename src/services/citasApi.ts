@@ -21,3 +21,23 @@ export async function actualizarEstado(
   if (!respuesta.ok) throw new Error(resultado.mensaje);
   return resultado.cita;
 }
+export type DatosNuevaCita = {
+  mascota: string;
+  cliente: string;
+  servicio: string;
+  fecha: string; // "2026-11-10"
+  hora: string;  // "10:00"
+};
+
+export async function crearCita(datos: DatosNuevaCita): Promise<Cita> {
+  const respuesta = await fetch(API_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(datos),
+  });
+
+  const resultado = await respuesta.json();
+  if (!respuesta.ok) throw new Error(resultado.mensaje);
+  return resultado.cita;
+}
+
